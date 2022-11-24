@@ -1,6 +1,12 @@
-﻿using AppCitas.Service;
+﻿using AppCitas;
+using AppCitas.Service;
+using AppCitas.UnitTests;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace AppCitas.UnitTests.Helpers
 {
@@ -16,12 +22,11 @@ namespace AppCitas.UnitTests.Helpers
                 return _lazyInstance.Value;
             }
         }
-
         public HttpClient Client { get; set; }
 
         private TestHelper()
         {
-            // Place for instance initialization code
+            // place for instance initialization code
             Client = new APIWebApplicationFactory<Startup>().CreateDefaultClient();
         }
     }
