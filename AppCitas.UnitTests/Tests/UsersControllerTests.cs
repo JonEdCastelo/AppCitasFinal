@@ -155,7 +155,7 @@ namespace AppCitas.UnitTests.Tests
         }
 
         [Theory]
-        [InlineData("NoContent", "lisa", "Pa$$w0rd", "2.png")]
+        [InlineData("NoContent", "rosa", "Pa$$w0rd", "10.png")]
         public async Task SetMainPhoto_OK(string statusCode, string username, string password, string file)
         {
             // Arrange
@@ -166,7 +166,12 @@ namespace AppCitas.UnitTests.Tests
             MultipartFormDataContent form = new MultipartFormDataContent();
             HttpContent content = new StringContent(file);
             form.Add(content, file);
-            StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+
+            string root = Windows.ApplicationModel.Package.Current.InstalledLocation.Path;
+            root = root.Substring(0, root.Length - 17);
+            string path = root + @"\Assets";
+            StorageFolder storageFolder = await StorageFolder.GetFolderFromPathAsync(path);
+
             Console.Write(string.Format("args1: {0}", storageFolder));
             StorageFile sampleFile = await storageFolder.GetFileAsync(file);
             var stream = await sampleFile.OpenStreamForReadAsync();
@@ -180,7 +185,8 @@ namespace AppCitas.UnitTests.Tests
 
             requestUri = $"{apiRoute}" + "/add-photo";
 
-            // Act
+            //Act
+
             var result = await _client.PostAsync(requestUri, form);
             var messageJson = await result.Content.ReadAsStringAsync();
             var message = messageJson.Split(',');
@@ -190,7 +196,7 @@ namespace AppCitas.UnitTests.Tests
 
             requestUri = $"{apiRoute}" + "/photos/"+id;
 
-            // Act
+
             httpResponse = await _client.PutAsync(requestUri, null);
             // Assert
             Assert.Equal(Enum.Parse<HttpStatusCode>(statusCode, true), httpResponse.StatusCode);
@@ -198,8 +204,8 @@ namespace AppCitas.UnitTests.Tests
         }
 
         [Theory]
-        [InlineData("OK", "karen", "Pa$$w0rd","3.png")]
-        public async Task DeletePhoto_OK(string statusCode, string username, string password,string file)
+        [InlineData("OK", "karen", "Pa$$w0rd", "3.png")]
+        public async Task DeletePhoto_OK(string statusCode, string username, string password, string file)
         {
             // Arrange
             var user = await LoginHelper.LoginUser(username, password);
@@ -208,7 +214,12 @@ namespace AppCitas.UnitTests.Tests
             MultipartFormDataContent form = new MultipartFormDataContent();
             HttpContent content = new StringContent(file);
             form.Add(content, file);
-            StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+
+            string root = Windows.ApplicationModel.Package.Current.InstalledLocation.Path;
+            root = root.Substring(0, root.Length - 17);
+            string path = root + @"\Assets";
+            StorageFolder storageFolder = await StorageFolder.GetFolderFromPathAsync(path);
+
             Console.Write(string.Format("args1: {0}", storageFolder));
             StorageFile sampleFile = await storageFolder.GetFileAsync(file);
             var stream = await sampleFile.OpenStreamForReadAsync();
@@ -238,8 +249,9 @@ namespace AppCitas.UnitTests.Tests
             Assert.Equal(statusCode, httpResponse.StatusCode.ToString());
         }
 
+
         [Theory]
-        [InlineData("NotFound", "davis", "Pa$$w0rd", "20")]
+        [InlineData("NotFound", "rosa", "Pa$$w0rd", "20")]
         public async Task DeletePhoto_NotFound(string statusCode, string username, string password, string id)
         {
             // Arrange

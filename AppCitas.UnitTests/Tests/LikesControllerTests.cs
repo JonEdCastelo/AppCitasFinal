@@ -100,7 +100,7 @@ namespace AppCitas.UnitTests.Tests
         }
 
         [Theory]
-        [InlineData("OK", "lisa", "Pa$$w0rd")]
+        [InlineData("OK", "todd", "Pa$$w0rd", "lisa")]
         public async Task GetUserLikes_OK(string statusCode, string username, string password)
         {
             // Arrange
